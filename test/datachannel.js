@@ -10,6 +10,14 @@ test('can create a new peer pair', function(t) {
 
 test('peers are connected', function(t) {
   t.plan(2);
-  t.equal(peers[0].iceConnectionState, 'connected');
-  t.equal(peers[1].iceConnectionState, 'connected');
+  t.equal(peers[0].iceConnectionState, 'new');
+  t.equal(peers[1].iceConnectionState, 'new');
+});
+
+test('can connect the peers', function(t) {
+  t.plan(2);
+  peers.connect(function(err) {
+    t.equal(peers[0].iceConnectionState, 'connected');
+    t.equal(peers[1].iceConnectionState, 'connected');
+  });
 });
