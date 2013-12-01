@@ -2,6 +2,8 @@ var test = require('tape');
 var peerpair = require('..');
 var peers;
 
+require('cog/logger').enable('*');
+
 test('can create a new peer pair', function(t) {
   t.plan(1);
   peers = peerpair();
@@ -16,8 +18,10 @@ test('peers are connected', function(t) {
 
 test('can connect the peers', function(t) {
   t.plan(2);
-  peers.connect(function(err) {
+  peers.events.once('connected', function() {
     t.equal(peers[0].iceConnectionState, 'connected');
     t.equal(peers[1].iceConnectionState, 'connected');
   });
+
+  peers.connect();
 });
