@@ -133,15 +133,15 @@ module.exports = function(peers, opts) {
 
       dcs.forEach(function(pair) {
         pair.forEach(function(dc) {
+          console.log(dc.readyState);
           if (dc.readyState !== 'open') {
             allConnected = false;
 
             if (! waitForOpen) {
               dc.onopen = waitForOpen = function() {
                 dc.onopen = null;
+                checkChannelsConnected();
               }
-
-              checkChannelsConnected();
             }
           }
         });
