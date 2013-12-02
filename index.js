@@ -27,15 +27,23 @@ var defaultConfig = {
   ## Example Usage
 
 **/
-module.exports = function(opts) {
+module.exports = function(peers, opts) {
   var config = defaults({}, (opts || {}).config, defaultConfig);
   var events = new EventEmitter();
-  var peers;
 
   var RTCPeerConnection = (opts || {}).RTCPeerConnection ||
     detect('RTCPeerConnection');
   var RTCSessionDescription = (opts || {}).RTCSessionDescription ||
     detect('RTCSessionDescription');
+
+  // if we have not been provided peers
+  if (! Array.isArray(peers)) {
+    opts = peers;
+    peers = [];
+  }
+
+  // work with a copy
+  peers = [].concat(peers);
 
   function checkConnected() {
     var connected = peers.filter(function(peer) {
@@ -140,8 +148,8 @@ module.exports = function(opts) {
   peers[1].oniceconnectionstatechange = checkConnected;
 
   // when negotiation is needed run the create offer logic
-  peers[0].onnegotiationneeded = createOffer(peers[0], peers[1]);
-  peers[1].onnegotiationneeded = createOffer(peers[1], peers[0]);
+  // peers[0].onnegotiationneeded = createOffer(peers[0], peers[1]);
+  // peers[1].onnegotiationneeded = createOffer(peers[1], peers[0]);
 
   // candidate gathering
   peers[0].onicecandidate = handleIceCandidate(peers[0], peers[1]);
