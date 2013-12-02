@@ -31,8 +31,21 @@ module.exports = function(opts) {
   var config = defaults({}, (opts || {}).config, defaultConfig);
   var events = new EventEmitter();
   var peers;
+
   var RTCPeerConnection = (opts || {}).RTCPeerConnection ||
     detect('RTCPeerConnection');
+  var RTCSessionDescription = (opts || {}).RTCSessionDescription ||
+    detect('RTCSessionDescription');
+
+  function checkConnected() {
+    var connected = peers.filter(function(peer) {
+      return peer.iceConnectionState === 'connected';
+    });
+
+    if (connected.length === 2) {
+      events.emit('connected');
+    }
+  }
 
   function createAnswer(source, target) {
     return function() {
@@ -41,7 +54,7 @@ module.exports = function(opts) {
       // first update the remote description to match the local dsecription
       // of the target
       source.setRemoteDescription(
-        target.localDescription,
+        new RTCSessionDescription(target.localDescription),
         function() {
           debug('setRemoteDescription ok, creating answer');
 
@@ -49,11 +62,18 @@ module.exports = function(opts) {
             function(desc) {
               debug('createAnswer ok, setting remote description of source');
 
-              target.setRemoteDescription(
+              source.setLocalDescription(
                 desc,
                 function() {
-                  debug('handshake ok, signalling state = ' + source.signalingState);
+                  target.setRemoteDescription(
+                    new RTCSessionDescription(desc),
+                    function() {
+                      debug('handshake ok, signalling state = ' + source.signalingState);
+                    },
+                    reportError
+                  );
                 },
+
                 reportError
               );
             },
@@ -115,12 +135,9 @@ module.exports = function(opts) {
     new RTCPeerConnection(config, (opts || {}).constraints)
   ];
 
-  peers[0].oniceconnectionstatechange = function() {
-    debug('ice connection state of peer:0 changed: ', peer.iceConnectionState);
-    if (peer.iceConnectionState === 'connected') {
-      events.emit('connected');
-    }
-  };
+  // monitor each of the peer connections for the connected state
+  peers[0].oniceconnectionstatechange = checkConnected;
+  peers[1].oniceconnectionstatechange = checkConnected;
 
   // when negotiation is needed run the create offer logic
   peers[0].onnegotiationneeded = createOffer(peers[0], peers[1]);
