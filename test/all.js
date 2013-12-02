@@ -1,4 +1,5 @@
 // browser only tests
 if (typeof window != 'undefined') {
-  require('./datachannel');
+  require('./datachannel-manual');
+  require('./datachannel-auto');
 }
