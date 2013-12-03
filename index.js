@@ -216,9 +216,11 @@ module.exports = function(peers, opts) {
   peers[0].oniceconnectionstatechange = checkConnected;
   peers[1].oniceconnectionstatechange = checkConnected;
 
-  // when negotiation is needed run the create offer logic
-  // peers[0].onnegotiationneeded = createOffer(peers[0], peers[1]);
-  // peers[1].onnegotiationneeded = createOffer(peers[1], peers[0]);
+  // once connected, lets watch for renegotiation requirements
+  events.once('connected', function() {
+    peers[0].onnegotiationneeded = createOffer(peers[0], peers[1]);
+    peers[1].onnegotiationneeded = createOffer(peers[1], peers[0]);
+  });
 
   // candidate gathering
   peers[0].onicecandidate = handleIceCandidate(peers[0], peers[1]);
