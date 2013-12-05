@@ -14,9 +14,7 @@ var defaultConfig = {
   # peerpair
 
   The `peerpair` module is used to create two connected WebRTC
-  `RTCPeerConnection` objects on the local machine.  It's also useful to
-  provide people as a tongue twister where then pretty much end up saying
-  'pee pee' repeatedly.
+  `RTCPeerConnection` objects on the local machine.
 
   ## Why?
 
