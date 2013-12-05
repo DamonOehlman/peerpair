@@ -204,11 +204,10 @@ module.exports = function(peers, opts) {
     // events.emit('error', err);
   }
 
-  // create the peers
-  peers = [
-    new RTCPeerConnection(config, (opts || {}).constraints),
-    new RTCPeerConnection(config, (opts || {}).constraints)
-  ];
+  // if we haven't been supplied peers, then create them
+  while (peers.length < 2) {
+    peers.push(new RTCPeerConnection(config, (opts || {}).constraints));
+  }
 
   // monitor each of the peer connections for the connected state
   peers[0].oniceconnectionstatechange = checkConnected;
