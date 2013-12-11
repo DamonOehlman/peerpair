@@ -28,6 +28,8 @@ var defaultConfig = {
 module.exports = function(peers, opts) {
   var config = defaults({}, (opts || {}).config, defaultConfig);
   var events = new EventEmitter();
+  var inProgress = false;
+  var queued = [];
 
   var RTCPeerConnection = (opts || {}).RTCPeerConnection ||
     detect('RTCPeerConnection');
@@ -75,6 +77,7 @@ module.exports = function(peers, opts) {
                     new RTCSessionDescription(desc),
                     function() {
                       debug('handshake ok, signalling state = ' + source.signalingState);
+                      nextQueued();
                     },
                     reportError
                   );
@@ -93,6 +96,14 @@ module.exports = function(peers, opts) {
 
   function createOffer(source, target) {
     return function() {
+      // if a handshake is in progress, then queue the request
+      if (inProgress) {
+        return queued.push([ source, target ]);
+      }
+
+      // flag as in progress
+      inProgress = true;
+
       debug('creating offer');
       source.createOffer(
         function(desc) {
@@ -198,9 +209,22 @@ module.exports = function(peers, opts) {
     };
   }
 
+  function nextQueued() {
+    var next = queued.shift();
+
+    // remove the in progress flag
+    inProgress = false;
+
+    // run the next queued offer (if there is one)
+    if (next) {
+      createOffer(next[0], next[1])();
+    }
+  }
+
   function reportError(err) {
-    debug('error: ', err);
+    console.error('error: ', err);
     // events.emit('error', err);
+    nextQueued();
   }
 
   // if we haven't been supplied peers, then create them
