@@ -10,6 +10,11 @@ var defaultConfig = {
   iceServers: []
 };
 
+var CONNECTED_STATES = [
+  'connected',
+  'completed'
+];
+
 /**
   # peerpair
 
@@ -47,7 +52,7 @@ module.exports = function(peers, opts) {
 
   function checkConnected() {
     var connected = peers.filter(function(peer) {
-      return peer.iceConnectionState === 'connected';
+      return CONNECTED_STATES.indexOf(peer.iceConnectionState) >= 0;
     });
 
     if (connected.length === 2) {

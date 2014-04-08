@@ -29,8 +29,17 @@ test('can connect the peers', function(t) {
   t.plan(5);
 
   peers.events.once('connected', function() {
-    t.equal(peers[0].iceConnectionState, 'connected');
-    t.equal(peers[1].iceConnectionState, 'connected');
+    t.ok(
+      peers[0].iceConnectionState === 'connected' ||
+      peers[0].iceConnectionState === 'completed',
+      'connected'
+    );
+
+    t.ok(
+      peers[1].iceConnectionState === 'connected' ||
+      peers[1].iceConnectionState === 'completed',
+      'connected'
+    );
   });
 
   peers[1].ondatachannel = function(evt) {
