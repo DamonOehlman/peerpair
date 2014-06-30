@@ -18,8 +18,8 @@
   "author": "Damon Oehlman <damon.oehlman@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "rtc-core": "^1",
-    "cog": "^0.5.3"
+    "cog": "^1.0.0",
+    "rtc-core": "^3.0.0"
   },
   "testling": {
     "files": "test/all.js",
