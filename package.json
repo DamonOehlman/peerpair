@@ -1,6 +1,6 @@
 {
   "name": "peerpair",
-  "version": "0.4.2",
+  "version": "1.0.0",
   "description": "Simple WebRTC RTCPeerConnection pair useful for testing WebRTC modules",
   "main": "index.js",
   "scripts": {
