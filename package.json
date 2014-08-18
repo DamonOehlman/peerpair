@@ -7,10 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "gendocs": "gendocs > README.md"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://bitbucket.org/DamonOehlman/peerpair.git"
-  },
   "keywords": [
     "webrtc",
     "testing"
@@ -33,5 +29,16 @@
   },
   "devDependencies": {
     "tape": "^2"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DamonOehlman/peerpair.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DamonOehlman/peerpair/issues"
+  },
+  "homepage": "https://github.com/DamonOehlman/peerpair"
 }
